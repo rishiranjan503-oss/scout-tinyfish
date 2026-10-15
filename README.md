@@ -182,14 +182,13 @@ Invoke-RestMethod -Uri "http://localhost:3000/api/search" `
 - Verify the TinyFish API key is valid
 - Some job sites block automated requests; Scout will skip those
 
-## What Scout Doesn't Do
-
-- ❌ Generate or invent job listings
-- ❌ Cache results (every search is live)
-- ❌ Store user data beyond browser localStorage
-- ❌ Show jobs from LinkedIn, Indeed, or other aggregators (focuses on direct company sites)
-
+#
 What Scout Does Do:
+- Generate or invent job listings
+- Cache results (every search is live)
+-  Store user data beyond browser localStorage
+-  Show jobs from LinkedIn, Indeed, or other aggregators (focuses on direct company sites)
+
 
 - ✅ Find real, open positions from company careers pages
 - ✅ Match jobs to your preferences
