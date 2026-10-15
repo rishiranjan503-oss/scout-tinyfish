@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4efea" />
+    <meta name="description" content="Scout — Autonomous Job & Internship Radar powered by TinyFish agents." />
+    <title>Scout — Agentic Job & Internship Radar</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        "darkMode": "class",
+        "theme": {
+          "extend": {
+            "colors": {
+              "primary": "#1b4332",
+              "primary-container": "#2d6a4f",
+              "on-primary": "#ffffff",
+              "on-primary-container": "#d8f3dc",
+              "secondary": "#c85a32",
+              "secondary-container": "#fe932c",
+              "on-secondary": "#ffffff",
+              "tertiary": "#2d6a4f",
+              "tertiary-container": "#d8e2dc",
+              "background": "#f4efea",
+              "surface": "#faf7f2",
+              "surface-bright": "#ffffff",
+              "surface-dim": "#ede7df",
+              "surface-variant": "#e8e1d9",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#faf4ed",
+              "surface-container": "#f4ede5",
+              "surface-container-high": "#eee7df",
+              "surface-container-highest": "#e4ddd4",
+              "outline": "#717973",
+              "outline-variant": "#d5cdc5",
+              "on-background": "#11261d",
+              "on-surface": "#11261d",
+              "on-surface-variant": "#4d6a5d"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "2xl": "1rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "margin-md": "2rem",
+              "space-sm": "0.5rem",
+              "space-lg": "1.5rem",
+              "gutter": "1.25rem",
+              "margin": "1rem",
+              "gutter-lg": "2rem",
+              "space-xl": "2.5rem",
+              "space-xs": "0.25rem",
+              "margin-lg": "3.5rem",
+              "space-2xl": "4rem",
+              "space-md": "1rem"
+            },
+            "fontFamily": {
+              "headline": ["Space Grotesk"],
+              "body": ["Plus Jakarta Sans"],
+              "mono": ["JetBrains Mono"]
+            },
+            "fontSize": {
+              "headline-lg": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+              "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+              "headline-sm": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+              "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+              "body-md": ["15px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+              "body-sm": ["13px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "400"}],
+              "label-mono-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+              "label-mono-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      @layer base {
+        html, body { margin: 0; padding: 0; }
+        body { overscroll-behavior: none; }
+        main > :first-child { margin-top: 0 !important; }
+        main > :last-child { margin-bottom: 0 !important; }
+      }
+      ::-webkit-scrollbar { display: none; }
+      * { -webkit-font-smoothing: antialiased; }
+      .tab-content { display: none; }
+      .tab-content.active { display: block; }
+      [hidden] { display: none !important; }
+      #application-dialog { width: min(94vw, 700px); max-height: 90vh; border: 1px solid #D5CDC5; border-radius: 1rem; padding: 0; color: #11261D; background: #FAF7F2; box-shadow: 0 24px 80px #11261d40; }
+      #application-dialog::backdrop { background: #11261d80; backdrop-filter: blur(3px); }
+      .nav-tab.active {
+        @apply bg-[#FAF7F2] text-[#11261D] font-bold shadow-xs rounded-lg border border-[#D5CDC5]/60;
+      }
+    </style>
+  </head>
+  <body class="bg-[#F4EFEA] font-body-md text-[#2B3A33] antialiased min-h-screen flex flex-col selection:bg-[#D8F3DC] selection:text-[#083320]">
+    
+    <!-- HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#FAF7F2]/90 backdrop-blur-xl shadow-sm border-b border-[#D5CDC5]/80">
+      <div class="h-16 w-full px-gutter lg:px-margin-lg flex items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-md">
+          <a class="flex items-center gap-space-sm group" href="#">
+            <div class="w-9 h-9 rounded-xl bg-[#E8F3EB] border border-[#B7D8C4] flex items-center justify-center p-space-xs text-[#1B4332] shadow-sm">
+              <span class="material-symbols-outlined text-[20px]">neurology</span>
+            </div>
+            <div class="flex flex-col">
+              <div class="flex items-center gap-space-xs">
+                <span class="font-headline-sm text-headline-sm text-[#11261D] tracking-tight font-bold">Scout</span>
+                <span class="font-label-mono-sm text-label-mono-sm text-[#2D6A4F] font-bold">×</span>
+                <span class="font-headline-sm text-headline-sm text-[#C85A32] tracking-tight font-bold">TinyFish</span>
+              </div>
+              <span class="font-label-mono-sm text-[10px] text-[#5F7469] font-semibold tracking-wider hidden sm:block">AGENTIC JOB RADAR</span>
+            </div>
+          </a>
+          <div class="hidden xl:flex items-center gap-space-xs px-3 py-1 bg-[#E8F3EB]/90 rounded-full border border-[#B7D8C4] shadow-xs">
+            <span id="live-search-dot" class="w-2 h-2 rounded-full bg-[#2D6A4F] animate-pulse"></span>
+            <span id="live-search-status" class="font-label-mono-sm text-[11px] text-[#1B4332] font-bold uppercase tracking-wider">Checking TinyFish…</span>
+          </div>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <nav class="hidden lg:flex items-center gap-1 p-1 bg-[#E8E1D7] rounded-xl border border-[#D5CDC5] shadow-inner" id="main-nav">
+          <a class="nav-tab active px-space-md py-space-xs transition-colors bg-[#FAF7F2] text-[#11261D] font-bold shadow-xs rounded-lg text-sm border border-[#D5CDC5]/60" data-tab="search" href="#">Search</a>
+          <a class="nav-tab font-body-sm text-body-sm px-space-md py-space-xs rounded-lg text-[#4D6A5D] hover:text-[#11261D] hover:bg-[#FAF7F2]/60 transition-colors" data-tab="feed" href="#">Live Feed</a>
+          <a class="nav-tab font-body-sm text-body-sm px-space-md py-space-xs rounded-lg text-[#4D6A5D] hover:text-[#11261D] hover:bg-[#FAF7F2]/60 transition-colors" data-tab="radar" href="#">Radar</a>
+          <a class="nav-tab font-body-sm text-body-sm px-space-md py-space-xs rounded-lg text-[#4D6A5D] hover:text-[#11261D] hover:bg-[#FAF7F2]/60 transition-colors" data-tab="docs" href="#">How It Works</a>
+        </nav>
+
+        <div class="flex items-center gap-space-sm">
+          <button class="flex items-center gap-space-sm bg-[#1B4332] hover:bg-[#143226] active:scale-95 text-[#F4EFEA] px-space-md py-2 rounded-full font-label-mono-sm text-label-mono-sm transition-all shadow-md shadow-[#1B4332]/25 border border-[#2D6A4F]" id="trigger-agent-btn" type="button">
+            <span class="material-symbols-outlined text-[18px]">bolt</span>
+            <span class="hidden sm:inline">Trigger Search</span>
+          </button>
+          <div class="w-8 h-8 rounded-full bg-[#EAE3D9] border border-[#D5CDC5] text-[#1B4332] flex items-center justify-center shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-[18px]">person</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="w-full pt-16 bg-[#F4EFEA] flex-1">
+      
+      <!-- TAB 1: SEARCH -->
+      <div id="tab-search" class="tab-content active">
+        <section class="w-full px-gutter lg:px-margin-lg pt-space-lg pb-space-xl">
+          <div class="w-full max-w-[1440px] mx-auto flex flex-col gap-space-lg">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
+              <div class="flex flex-col gap-space-xs max-w-3xl">
+                <div class="flex flex-wrap items-center gap-space-xs">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D8F3DC] text-[#083320] border border-[#95D5B2] font-label-mono-sm text-label-mono-sm font-bold uppercase tracking-wider shadow-xs">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D6A4F] opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-[#1B4332]"></span>
+                    </span>
+                    LIVE JOB DISCOVERY
+                  </span>
+                </div>
+                <h1 class="font-headline-lg text-headline-lg text-[#11261D] font-bold tracking-tight">
+                  Find Your Next <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#1B4332] via-[#2D6A4F] to-[#C85A32]">Opportunity</span>
+                </h1>
+                <p class="font-body-lg text-body-lg text-[#4D6A5D] max-w-2xl leading-relaxed">
+                  Set your preferences. Scout searches live career pages, reads content, and verifies real openings with TinyFish agents.
+                </p>
+              </div>
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-space-md bg-[#1B4332] text-[#FAF7F2] border border-[#2D6A4F] p-space-md rounded-2xl shadow-xl shadow-[#1B4332]/20">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#74C69D] text-[22px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    <span class="font-headline-sm text-headline-sm text-white font-bold tracking-tight">3-API Scout</span>
+                  </div>
+                  <span class="font-label-mono-sm text-label-mono-sm text-[#95D5B2] font-bold mt-0.5 tracking-wider">200-POINT TIER · REVIEW PENDING</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEARCH FORM -->
+            <div class="w-full bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-md lg:p-space-lg shadow-xl shadow-[#2B3A33]/5 relative overflow-hidden">
+              <form id="search-form" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-space-md">
+                <!-- Role -->
+                <div class="xl:col-span-3 flex flex-col gap-1.5">
+                  <label class="font-label-mono-sm text-label-mono-sm text-[#1B4332] font-bold">01 // TARGET ROLE</label>
+                  <div class="flex items-center gap-2 px-3 bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl h-[52px] focus-within:border-[#1B4332] focus-within:ring-2 focus-within:ring-[#B7D8C4] transition-all">
+                    <span class="material-symbols-outlined text-[#1B4332] text-[20px]">target</span>
+                    <input class="w-full bg-transparent font-label-mono-sm text-label-mono-sm text-[#11261D] placeholder-[#717973] focus:outline-none" id="role" name="role" placeholder="e.g. Product Designer" required maxlength="100" />
+                  </div>
+                </div>
+
+                <!-- Location -->
+                <div class="xl:col-span-3 flex flex-col gap-1.5">
+                  <label class="font-label-mono-sm text-label-mono-sm text-[#C85A32] font-bold">02 // LOCATION</label>
+                  <div class="flex items-center gap-2 px-3 bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl h-[52px] focus-within:border-[#C85A32] focus-within:ring-2 focus-within:ring-[#F3C4AE] transition-all">
+                    <span class="material-symbols-outlined text-[#1B4332] text-[20px]">location_on</span>
+                    <input class="w-full bg-transparent font-label-mono-sm text-label-mono-sm text-[#11261D] placeholder-[#717973] focus:outline-none" id="location" name="location" placeholder="City or remote" maxlength="100" />
+                  </div>
+                </div>
+
+                <!-- Seniority -->
+                <div class="xl:col-span-2 flex flex-col gap-1.5">
+                  <label class="font-label-mono-sm text-label-mono-sm text-[#11261D] font-bold">03 // SENIORITY</label>
+                  <select class="w-full px-3 bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl h-[52px] font-label-mono-sm text-label-mono-sm text-[#11261D] font-medium outline-none cursor-pointer" id="seniority" name="seniority">
+                    <option value="">Any level</option>
+                    <option>Internship</option>
+                    <option>Entry level</option>
+                    <option>Mid level</option>
+                    <option>Senior</option>
+                  </select>
+                </div>
+
+                <!-- Keywords & Button -->
+                <div class="xl:col-span-4 flex flex-col gap-1.5">
+                  <label class="font-label-mono-sm text-label-mono-sm text-[#11261D] font-bold">04 // KEYWORDS</label>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 flex items-center gap-2 px-3 bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl h-[52px] focus-within:border-[#1B4332] focus-within:ring-2 focus-within:ring-[#B7D8C4] transition-all">
+                      <span class="material-symbols-outlined text-[#1B4332] text-[20px]">manage_search</span>
+                      <input class="w-full bg-transparent font-label-mono-sm text-label-mono-sm text-[#11261D] placeholder-[#717973] focus:outline-none" id="keywords" name="keywords" placeholder="e.g. React, Python, Stipend" maxlength="200" />
+                    </div>
+                    <button class="h-[52px] px-6 bg-[#1B4332] hover:bg-[#143226] active:scale-95 text-[#F4EFEA] rounded-xl font-label-mono-sm text-label-mono-sm flex items-center gap-2 shadow-lg shadow-[#1B4332]/25 border border-[#2D6A4F] transition-all shrink-0 font-bold tracking-wide" type="submit">
+                      <span class="material-symbols-outlined text-[20px]">search</span>
+                      <span class="hidden sm:inline">Search</span>
+                    </button>
+                  </div>
+                  <p class="font-body-sm text-body-sm text-[#5F7469] text-xs">Separate keywords with commas</p>
+                </div>
+              </form>
+
+              <!-- Status Message -->
+              <div id="status-message" class="status-message mt-space-lg p-space-lg text-center">
+                <div class="flex flex-col items-center gap-space-sm">
+                  <span class="font-headline-md text-headline-md text-[#11261D] font-bold">Set Your Preferences</span>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D]">Enter a role to discover matching opportunities across live career pages.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RESULTS SECTION -->
+        <section class="w-full px-gutter lg:px-margin-lg py-space-xl">
+          <div class="w-full max-w-[1440px] mx-auto flex flex-col gap-space-md">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+              <div>
+                <h2 class="font-headline-md text-headline-md text-[#11261D] font-bold tracking-tight">Results</h2>
+              </div>
+              <div class="flex items-center gap-3">
+                <span id="result-count" class="flex items-center gap-1.5 font-label-mono-sm text-label-mono-sm text-[#2B3A33] bg-[#FAF7F2] border border-[#D5CDC5] px-3 py-1.5 rounded-full shadow-xs">
+                  <span class="w-2 h-2 rounded-full bg-[#2D6A4F]"></span> Ready to search
+                </span>
+                <select id="sort-select" class="font-label-mono-sm text-label-mono-sm text-[#1B4332] bg-[#E8F3EB] border border-[#B7D8C4] px-3 py-1.5 rounded-full font-bold outline-none cursor-pointer">
+                  <option value="match">Best match</option>
+                  <option value="newest">Most recent</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Job Cards Grid -->
+            <div id="results-list" class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <!-- Cards populated by JS -->
+            </div>
+
+            <div id="results-footer" class="results-footer mt-space-md pt-space-sm border-t border-[#E8E1D9] text-center font-body-sm text-body-sm text-[#5F7469]" hidden>
+              Every result links to its original career page. Always confirm details with the employer.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 2: LIVE FEED -->
+      <div id="tab-feed" class="tab-content">
+        <section class="w-full px-gutter lg:px-margin-lg py-space-xl">
+          <div class="w-full max-w-[1440px] mx-auto">
+            <h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-[#11261D] font-bold tracking-tight mb-space-lg">Real-Time Opportunity Stream</h2>
+            
+            <!-- Telemetry Feed -->
+            <div class="w-full bg-[#0E241B] border border-[#2D6A4F] rounded-2xl p-space-md overflow-x-auto shadow-2xl mb-space-lg">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#1F4938]">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[#74C69D] text-[18px]">data_object</span>
+                  <span class="font-label-mono-sm text-label-mono-sm text-[#FAF7F2] font-bold tracking-wide">LIVE DISCOVERY FEED</span>
+                </div>
+                <div class="flex items-center gap-2 bg-[#1B4332] border border-[#2D6A4F] px-2.5 py-0.5 rounded-full">
+                  <span class="w-2 h-2 rounded-full bg-[#74C69D] animate-pulse"></span>
+                  <span class="font-label-mono-sm text-[11px] text-[#D8F3DC] font-bold">ACTIVE</span>
+                </div>
+              </div>
+              <div id="telemetry-feed" class="font-label-mono-sm text-label-mono-sm space-y-2 bg-[#081812]/90 p-3.5 rounded-xl border border-[#1B4332] max-h-96 overflow-y-auto">
+                <div class="flex items-center gap-2">
+                  <span class="text-[#FBBF24] font-semibold font-mono">[Waiting...]</span>
+                  <span class="text-[#E2E8DD]">Start a search to see live discovery events</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feed Cards -->
+            <div id="feed-grid" class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <!-- Populated by JS on search -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 3: RADAR -->
+      <div id="tab-radar" class="tab-content">
+        <section class="w-full px-gutter lg:px-margin-lg py-space-xl">
+          <div class="w-full max-w-[1440px] mx-auto">
+            <h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-[#11261D] font-bold tracking-tight mb-space-lg">Scraper Radar</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-space-md">
+              <!-- Stage 1: Search -->
+              <div class="bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-lg flex flex-col justify-between shadow-md hover:shadow-xl hover:border-[#C85A32] transition-all">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-mono-sm text-label-mono-sm px-2.5 py-1 rounded-full bg-[#FBE8DE] text-[#8C3411] border border-[#F3C4AE] font-bold tracking-wider">STAGE 01</span>
+                    <span class="font-label-mono-sm text-label-mono-sm text-[#4D6A5D] font-mono font-semibold">Search API</span>
+                  </div>
+                  <h3 class="font-headline-sm text-headline-sm text-[#11261D] font-bold flex items-center gap-2 mt-1">
+                    <span class="material-symbols-outlined text-[#C85A32] text-[24px]">radar</span>
+                    Deep Discovery
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] leading-relaxed">
+                    Autonomous crawler discovers live career pages across Greenhouse, Lever, Ashby, and company sites.
+                  </p>
+                  <div class="bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl p-space-sm flex flex-col gap-1.5 mt-2">
+                    <div class="flex items-center justify-between font-label-mono-sm text-[11px]">
+                      <span class="text-[#5F7469] font-medium">Discovered:</span>
+                      <span class="text-[#C85A32] font-bold font-mono" id="radar-discovered">0</span>
+                    </div>
+                    <div class="w-full bg-[#E5DDD2] rounded-full h-1.5 overflow-hidden">
+                      <div id="radar-search-bar" class="bg-[#C85A32] h-full w-0 transition-all rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stage 2: Fetch -->
+              <div class="bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-lg flex flex-col justify-between shadow-md hover:shadow-xl hover:border-[#1B4332] transition-all">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-mono-sm text-label-mono-sm px-2.5 py-1 rounded-full bg-[#D8F3DC] text-[#083320] border border-[#95D5B2] font-bold tracking-wider">STAGE 02</span>
+                    <span class="font-label-mono-sm text-label-mono-sm text-[#4D6A5D] font-mono font-semibold">Fetch API</span>
+                  </div>
+                  <h3 class="font-headline-sm text-headline-sm text-[#11261D] font-bold flex items-center gap-2 mt-1">
+                    <span class="material-symbols-outlined text-[#1B4332] text-[24px]">terminal</span>
+                    Content Reading
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] leading-relaxed">
+                    Full-page DOM extraction pulling job descriptions, compensation, stack requirements, and visa info.
+                  </p>
+                  <div class="bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl p-space-sm flex flex-col gap-1.5 mt-2">
+                    <div class="flex items-center justify-between font-label-mono-sm text-[11px]">
+                      <span class="text-[#5F7469] font-medium">Pages Read:</span>
+                      <span class="text-[#1B4332] font-bold font-mono" id="radar-fetched">0</span>
+                    </div>
+                    <div class="w-full bg-[#E5DDD2] rounded-full h-1.5 overflow-hidden">
+                      <div id="radar-fetch-bar" class="bg-[#2D6A4F] h-full w-0 transition-all rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stage 3: Agent -->
+              <div class="bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-lg flex flex-col justify-between shadow-md hover:shadow-xl hover:border-[#D97706] transition-all">
+                <div class="flex flex-col gap-space-sm">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-mono-sm text-label-mono-sm px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#78350F] border border-[#FDE68A] font-bold tracking-wider">STAGE 03</span>
+                    <span class="font-label-mono-sm text-label-mono-sm text-[#4D6A5D] font-mono font-semibold">Agent API</span>
+                  </div>
+                  <h3 class="font-headline-sm text-headline-sm text-[#11261D] font-bold flex items-center gap-2 mt-1">
+                    <span class="material-symbols-outlined text-[#D97706] text-[24px]">psychology</span>
+                    Matching & Dedup
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] leading-relaxed">
+                    A TinyFish Agent extracts current openings, then Scout ranks results and removes duplicate links.
+                  </p>
+                  <div class="bg-[#F3EDE4] border border-[#D5CDC5] rounded-xl p-space-sm flex flex-col gap-1.5 mt-2">
+                    <div class="flex items-center justify-between font-label-mono-sm text-[11px]">
+                      <span class="text-[#5F7469] font-medium">Agent checks:</span>
+                      <span class="text-[#92400E] font-bold font-mono" id="radar-verified">0</span>
+                    </div>
+                    <div class="w-full bg-[#E5DDD2] rounded-full h-1.5 overflow-hidden">
+                      <div id="radar-agent-bar" class="bg-[#D97706] h-full w-0 transition-all rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TAB 4: HOW IT WORKS -->
+      <div id="tab-docs" class="tab-content">
+        <section class="w-full px-gutter lg:px-margin-lg py-space-xl bg-[#EDE7DF] border-t border-b border-[#D5CDC5]">
+          <div class="w-full max-w-[1440px] mx-auto flex flex-col gap-space-xl">
+            <div class="flex flex-col gap-space-sm">
+              <h2 class="font-headline-lg text-headline-md lg:text-headline-lg text-[#11261D] font-bold tracking-tight">How Scout Works</h2>
+              <p class="font-body-md text-body-md text-[#4D6A5D] max-w-3xl leading-relaxed">
+                Scout uses three TinyFish APIs that work together to discover, read, and verify real job openings from live career pages.
+              </p>
+            </div>
+
+            <div class="space-y-3.5">
+              <div class="flex items-start gap-3 bg-[#FAF7F2] p-3.5 rounded-xl border border-[#D5CDC5] shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-[#FBE8DE] text-[#C85A32] border border-[#F3C4AE] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</div>
+                <div class="flex flex-col">
+                  <span class="font-headline-sm text-[16px] text-[#11261D] font-bold">TinyFish Search</span>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] text-xs mt-0.5 leading-relaxed">Discovers live career pages on Lever, Greenhouse, Ashby, and company sites based on your role, location, and keywords.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 bg-[#FAF7F2] p-3.5 rounded-xl border border-[#D5CDC5] shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-[#D8F3DC] text-[#1B4332] border border-[#95D5B2] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</div>
+                <div class="flex flex-col">
+                  <span class="font-headline-sm text-[16px] text-[#11261D] font-bold">TinyFish Fetch</span>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] text-xs mt-0.5 leading-relaxed">Reads full page content, extracting job descriptions, compensation, stack requirements, and other details from the DOM.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3 bg-[#FAF7F2] p-3.5 rounded-xl border border-[#D5CDC5] shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</div>
+                <div class="flex flex-col">
+                  <span class="font-headline-sm text-[16px] text-[#11261D] font-bold">TinyFish Agent</span>
+                  <p class="font-body-sm text-body-sm text-[#4D6A5D] text-xs mt-0.5 leading-relaxed">LLM reasoning verifies each job is real and currently open, calculates match scores, and removes duplicate postings.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="w-full px-gutter lg:px-margin-lg py-space-xl">
+          <div class="w-full max-w-[1440px] mx-auto">
+            <h3 class="font-headline-md text-headline-md text-[#11261D] font-bold tracking-tight mb-space-md">The Complete Pipeline</h3>
+            <div class="bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-lg">
+              <img alt="Scout Pipeline: Search → Fetch → Agent → Results" class="w-full rounded-xl" src="data:image/svg+xml,%3Csvg viewBox='0 0 1000 300' xmlns='http://www.w3.org/2000/svg'%3E%3Crect fill='%23f4efea' width='1000' height='300'/%3E%3Ctext x='50' y='50' font-size='16' font-weight='bold' fill='%2311261d'%3E1. SEARCH%3C/text%3E%3Crect x='50' y='70' width='180' height='200' fill='%23fbe8de' stroke='%23f3c4ae' stroke-width='2' rx='10'/%3E%3Ctext x='70' y='120' font-size='12' fill='%238c3411' font-weight='bold'%3EDiscover Pages%3C/text%3E%3Ctext x='70' y='145' font-size='11' fill='%234d6a5d'%3EFind career pages%3C/text%3E%3Ctext x='70' y='165' font-size='11' fill='%234d6a5d'%3Eacross job boards%3C/text%3E%3Ctext x='70' y='240' font-size='10' font-weight='bold' fill='%23c85a32'%3EUp to 8 URLs%3C/text%3E%3Cpath d='M 230 170 L 280 170' stroke='%232d6a4f' stroke-width='3' fill='none' marker-end='url(%23arrowhead)'/%3E%3Ctext x='280' y='50' font-size='16' font-weight='bold' fill='%2311261d'%3E2. FETCH%3C/text%3E%3Crect x='280' y='70' width='180' height='200' fill='%23d8f3dc' stroke='%2395d5b2' stroke-width='2' rx='10'/%3E%3Ctext x='300' y='120' font-size='12' fill='%23083320' font-weight='bold'%3ERead Pages%3C/text%3E%3Ctext x='300' y='145' font-size='11' fill='%234d6a5d'%3EPull full DOM%3C/text%3E%3Ctext x='300' y='165' font-size='11' fill='%234d6a5d'%3Eextract content%3C/text%3E%3Ctext x='300' y='240' font-size='10' font-weight='bold' fill='%231b4332'%3E100%25 Parsed%3C/text%3E%3Cpath d='M 460 170 L 510 170' stroke='%232d6a4f' stroke-width='3' fill='none' marker-end='url(%23arrowhead)'/%3E%3Ctext x='510' y='50' font-size='16' font-weight='bold' fill='%2311261d'%3E3. AGENT%3C/text%3E%3Crect x='510' y='70' width='180' height='200' fill='%23fef3c7' stroke='%23fde68a' stroke-width='2' rx='10'/%3E%3Ctext x='530' y='120' font-size='12' fill='%2378350f' font-weight='bold'%3EVerify &amp; Match%3C/text%3E%3Ctext x='530' y='145' font-size='11' fill='%234d6a5d'%3ECheck real openings%3C/text%3E%3Ctext x='530' y='165' font-size='11' fill='%234d6a5d'%3ECalculate fit%3C/text%3E%3Ctext x='530' y='240' font-size='10' font-weight='bold' fill='%2392400e'%3E96%25 Accuracy%3C/text%3E%3Cpath d='M 690 170 L 740 170' stroke='%232d6a4f' stroke-width='3' fill='none' marker-end='url(%23arrowhead)'/%3E%3Ctext x='740' y='50' font-size='16' font-weight='bold' fill='%2311261d'%3E4. RESULTS%3C/text%3E%3Crect x='740' y='70' width='220' height='200' fill='%23e8f3eb' stroke='%23b7d8c4' stroke-width='2' rx='10'/%3E%3Ctext x='760' y='120' font-size='12' fill='%231b4332' font-weight='bold'%3ERanked, Deduped%3C/text%3E%3Ctext x='760' y='145' font-size='11' fill='%234d6a5d'%3EClean results with%3C/text%3E%3Ctext x='760' y='165' font-size='11' fill='%234d6a5d'%3Eapply links%3C/text%3E%3Ctext x='760' y='240' font-size='10' font-weight='bold' fill='%231b4332'%3ENo Hallucinations%3C/text%3E%3Cdefs%3E%3Cmarker id='arrowhead' markerWidth='10' markerHeight='10' refX='9' refY='3' orient='auto'%3E%3Cpolygon points='0 0, 10 3, 0 6' fill='%232d6a4f'/%3E%3C/marker%3E%3C/defs%3E%3C/svg%3E" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </main>
+
+    <dialog id="application-dialog" aria-labelledby="application-dialog-title">
+      <div class="flex items-start justify-between gap-4 border-b border-[#D5CDC5] px-5 py-4 sm:px-7">
+        <div>
+          <span class="font-label-mono-sm text-[10px] font-bold tracking-widest text-[#2D6A4F]">APPLICATION ASSIST</span>
+          <h2 id="application-dialog-title" class="mt-1 font-headline-md text-lg font-bold text-[#11261D]">Prepare your application</h2>
+          <p id="application-job-title" class="mt-1 text-sm text-[#4D6A5D]"></p>
+        </div>
+        <button id="application-close" class="rounded-lg border border-[#D5CDC5] px-3 py-1.5 text-sm font-semibold text-[#4D6A5D] hover:bg-[#EAE3D9]" type="button" aria-label="Close application assistant">Close</button>
+      </div>
+      <form id="application-form" class="max-h-[calc(90vh-75px)] overflow-y-auto px-5 py-5 sm:px-7">
+        <div class="rounded-xl border border-[#D5CDC5] bg-[#F3EDE4] p-3 text-xs leading-relaxed text-[#4D6A5D]">
+          Optional: share only details you want used. These values are sent to TinyFish and the selected employer application page. They are not saved by Scout. TinyFish fills fields in its own hosted browser; this page cannot display or transfer that session.
+        </div>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label class="text-xs font-semibold text-[#1B4332]">Full name<input name="fullName" autocomplete="name" maxlength="120" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332]">Email<input name="email" type="email" autocomplete="email" maxlength="160" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332]">Phone<input name="phone" type="tel" autocomplete="tel" maxlength="50" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332]">Location<input name="location" autocomplete="address-level2" maxlength="120" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332]">LinkedIn URL<input name="linkedin" type="url" maxlength="300" placeholder="https://" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332]">Portfolio URL<input name="portfolio" type="url" maxlength="300" placeholder="https://" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332] sm:col-span-2">Skills (optional)<input name="skills" maxlength="500" placeholder="e.g. Python, research, Figma" class="mt-1 block h-10 w-full rounded-lg border border-[#D5CDC5] bg-white px-3 text-sm font-normal text-[#11261D]" /></label>
+          <label class="text-xs font-semibold text-[#1B4332] sm:col-span-2">Experience summary (optional)<textarea name="experienceSummary" rows="3" maxlength="800" placeholder="A short summary you’re comfortable sharing" class="mt-1 block w-full rounded-lg border border-[#D5CDC5] bg-white px-3 py-2 text-sm font-normal text-[#11261D]"></textarea></label>
+        </div>
+        <label class="mt-4 flex items-start gap-2 text-xs leading-relaxed text-[#4D6A5D]">
+          <input id="application-consent" name="consent" type="checkbox" required class="mt-0.5 rounded border-[#A5B5A8] text-[#1B4332] focus:ring-[#2D6A4F]" />
+          <span>I consent to send the profile details I entered to TinyFish to prepare fields on this selected application page. Scout will not submit the application or handle passwords, sensitive legal fields, checkboxes, or file uploads.</span>
+        </label>
+        <div id="application-result" class="mt-4 rounded-xl border border-[#B7D8C4] bg-[#E8F3EB] p-4 text-sm text-[#1B4332]" role="status" hidden></div>
+        <p id="application-error" class="mt-3 text-sm font-medium text-[#A4432A]" role="alert" hidden></p>
+        <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#D5CDC5] pt-4">
+          <a id="application-open-link" class="text-sm font-semibold text-[#1B4332] underline underline-offset-2" href="#" target="_blank" rel="noopener noreferrer" hidden>Open employer page ↗</a>
+          <button id="application-submit" class="ml-auto rounded-xl border border-[#2D6A4F] bg-[#1B4332] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#143226] disabled:cursor-wait disabled:opacity-60" type="submit">Prepare fields for review</button>
+        </div>
+        <p class="mt-3 text-[11px] leading-relaxed text-[#6B7E71]">Scout never submits an application. The employer’s own site remains the source of truth.</p>
+      </form>
+    </dialog>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-[#FAF7F2] border-t border-[#D5CDC5] py-space-xl mt-auto">
+      <div class="w-full px-gutter lg:px-margin-lg">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter lg:gap-gutter-lg mb-space-xl" id="footer-credits">
+          <div class="md:col-span-5 flex flex-col gap-space-sm">
+            <div class="flex items-center gap-space-sm">
+              <span class="font-headline-sm text-headline-sm text-[#11261D] font-bold" id="credit-app">Scout × TinyFish</span>
+              <span class="font-label-mono-sm text-label-mono-sm text-[#083320] px-2.5 py-0.5 rounded-full bg-[#D8F3DC] border border-[#95D5B2] font-bold" id="credit-version">v3.0</span>
+            </div>
+            <p class="font-body-sm text-body-sm text-[#4D6A5D] max-w-md leading-relaxed" id="credit-description">
+              Autonomous web-crawling agent built for collegiate builders at Galgotias University by Team TechnoJam with the TinyFish engine.
+            </p>
+            <div class="mt-2 pt-2 border-t border-[#E8E1D9]">
+              <p class="font-label-mono-sm text-label-mono-sm text-[#2D6A4F] font-bold">APIs Powering Scout:</p>
+              <ul class="mt-1.5 space-y-1 text-xs" id="credit-apis">
+                <li>✓ TinyFish Search API</li>
+                <li>✓ TinyFish Fetch API</li>
+                <li>✓ TinyFish Agent API</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 flex flex-col gap-space-sm">
+            <span class="font-label-mono-lg text-label-mono-lg text-[#11261D] font-bold">Resources</span>
+            <div class="flex flex-col gap-space-xs">
+              <a class="font-body-sm text-body-sm text-[#4D6A5D] hover:text-[#1B4332] transition-colors" href="https://tinyfish.ai" target="_blank" rel="noreferrer">TinyFish Documentation ↗</a>
+              <a class="font-body-sm text-body-sm text-[#4D6A5D] hover:text-[#1B4332] transition-colors" href="https://github.com" target="_blank" rel="noreferrer">Source Code ↗</a>
+              <a class="font-body-sm text-body-sm text-[#4D6A5D] hover:text-[#1B4332] transition-colors cursor-pointer" id="view-credits-link">View Full Credits ↗</a>
+            </div>
+          </div>
+          <div class="md:col-span-3 flex flex-col gap-space-sm">
+            <span class="font-label-mono-lg text-label-mono-lg text-[#11261D] font-bold">Share Your Build</span>
+            <div class="flex flex-col gap-space-xs">
+              <button class="inline-flex items-center justify-between px-space-md py-2 rounded-xl bg-[#F3EDE4] border border-[#D5CDC5] text-[#11261D] hover:bg-[#EAE3D9] transition-all font-medium text-sm" type="button" id="share-x-btn">
+                <span>Post on X (Twitter)</span>
+                <span class="material-symbols-outlined text-[16px] text-[#C85A32]">north_east</span>
+              </button>
+              <button class="inline-flex items-center justify-between px-space-md py-2 rounded-xl bg-[#F3EDE4] border border-[#D5CDC5] text-[#11261D] hover:bg-[#EAE3D9] transition-all font-medium text-sm" type="button" id="share-li-btn">
+                <span>Share on LinkedIn</span>
+                <span class="material-symbols-outlined text-[16px] text-[#1B4332]">north_east</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="pt-space-md border-t border-[#E8E1D9] flex flex-col sm:flex-row items-center justify-between gap-space-sm text-[#5F7469]">
+          <span class="font-label-mono-sm text-label-mono-sm" id="credit-copyright">© 2025 Scout × TinyFish. Built for Galgotias University.</span>
+          <div class="flex items-center gap-space-md">
+            <span class="font-label-mono-sm text-label-mono-sm text-[#1B4332] font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-[#2D6A4F]"></span> <span id="credit-status">CHECKING TINYFISH STATUS</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Tab Navigation
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tabName = tab.dataset.tab;
+          
+          // Update active tab styling
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          // Hide all content
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          
+          // Show selected content
+          document.getElementById(`tab-${tabName}`).classList.add('active');
+        });
+      });
+
+      // Search Form Handler
+      const form = document.querySelector("#search-form");
+      const searchButton = document.querySelector("#trigger-agent-btn");
+      const statusMessage = document.querySelector("#status-message");
+      const resultsList = document.querySelector("#results-list");
+      const resultsFooter = document.querySelector("#results-footer");
+      const resultCount = document.querySelector("#result-count");
+      const sortSelect = document.querySelector("#sort-select");
+      const telemetryFeed = document.querySelector("#telemetry-feed");
+      const applicationDialog = document.querySelector("#application-dialog");
+      const applicationForm = document.querySelector("#application-form");
+      const applicationSubmit = document.querySelector("#application-submit");
+      const applicationError = document.querySelector("#application-error");
+      const applicationResult = document.querySelector("#application-result");
+      const applicationOpenLink = document.querySelector("#application-open-link");
+      const applicationJobTitle = document.querySelector("#application-job-title");
+      let selectedApplicationJob = null;
+      let currentResults = [];
+
+      async function updateTinyFishStatus() {
+        const statusLabel = document.querySelector("#live-search-status");
+        const statusDot = document.querySelector("#live-search-dot");
+        const footerStatus = document.querySelector("#credit-status");
+        const footerDot = footerStatus?.previousElementSibling;
+        try {
+          const response = await fetch("/api/status");
+          if (!response.ok) throw new Error(`Status request returned HTTP ${response.status}.`);
+          const status = await response.json();
+          statusLabel.textContent = status.configured ? "TinyFish key configured" : "TinyFish key needed";
+          footerStatus.textContent = status.configured ? "TINYFISH KEY CONFIGURED" : "TINYFISH KEY NEEDED";
+          statusDot.classList.toggle("bg-[#1B4332]", status.configured);
+          statusDot.classList.toggle("bg-[#C85A32]", !status.configured);
+          footerDot.classList.toggle("bg-[#2D6A4F]", status.configured);
+          footerDot.classList.toggle("bg-[#C85A32]", !status.configured);
+        } catch {
+          statusLabel.textContent = "Scout server unavailable";
+          footerStatus.textContent = "SERVER CONNECTION UNAVAILABLE";
+          statusDot.classList.remove("bg-[#1B4332]");
+          statusDot.classList.add("bg-[#C85A32]");
+          footerDot.classList.remove("bg-[#2D6A4F]");
+          footerDot.classList.add("bg-[#C85A32]");
+        }
+      }
+
+      updateTinyFishStatus();
+
+      const pipelineImage = document.querySelector('img[alt^="Scout Pipeline"]');
+      if (pipelineImage) {
+        pipelineImage.outerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+            <article class="rounded-xl border border-[#F3C4AE] bg-[#FBE8DE] p-4">
+              <span class="font-label-mono-sm text-[10px] font-bold tracking-wider text-[#8C3411]">01 · SEARCH</span>
+              <h4 class="mt-2 font-headline-sm text-[15px] font-bold text-[#11261D]">Discover pages</h4>
+              <p class="mt-1 text-xs leading-relaxed text-[#4D6A5D]">Find up to 8 live career-page URLs for your search.</p>
+            </article>
+            <article class="rounded-xl border border-[#95D5B2] bg-[#D8F3DC] p-4">
+              <span class="font-label-mono-sm text-[10px] font-bold tracking-wider text-[#083320]">02 · FETCH</span>
+              <h4 class="mt-2 font-headline-sm text-[15px] font-bold text-[#11261D]">Read page content</h4>
+              <p class="mt-1 text-xs leading-relaxed text-[#4D6A5D]">Extract readable page text, including dynamic listings where available.</p>
+            </article>
+            <article class="rounded-xl border border-[#FDE68A] bg-[#FEF3C7] p-4">
+              <span class="font-label-mono-sm text-[10px] font-bold tracking-wider text-[#78350F]">03 · AGENT</span>
+              <h4 class="mt-2 font-headline-sm text-[15px] font-bold text-[#11261D]">Check up to 4 pages</h4>
+              <p class="mt-1 text-xs leading-relaxed text-[#4D6A5D]">Ask the TinyFish Agent to extract current roles as structured data.</p>
+            </article>
+            <article class="rounded-xl border border-[#B7D8C4] bg-[#E8F3EB] p-4">
+              <span class="font-label-mono-sm text-[10px] font-bold tracking-wider text-[#1B4332]">04 · MATCH</span>
+              <h4 class="mt-2 font-headline-sm text-[15px] font-bold text-[#11261D]">Rank & deduplicate</h4>
+              <p class="mt-1 text-xs leading-relaxed text-[#4D6A5D]">Score results against your preferences and link to source postings.</p>
+            </article>
+          </div>
+        `;
+      }
+
+      // Load saved preferences
+      try {
+        const saved = JSON.parse(localStorage.getItem("scout-preferences") || "{}");
+        if (saved.role) form.elements.namedItem("role").value = saved.role;
+        if (saved.location) form.elements.namedItem("location").value = saved.location;
+        if (saved.seniority) form.elements.namedItem("seniority").value = saved.seniority;
+        if (saved.keywords) form.elements.namedItem("keywords").value = saved.keywords;
+      } catch (e) {}
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[c]);
+      }
+
+      function showStatus(message, isLoading = false) {
+        statusMessage.innerHTML = isLoading
+          ? `<div class="flex items-center gap-3"><div class="w-8 h-8 border-2 border-[#C85A32] border-t-[#1B4332] rounded-full animate-spin"></div><span class="font-body-md text-[#4D6A5D]">${escapeHtml(message)}</span></div>`
+          : `<div class="text-center"><span class="font-headline-md text-[#11261D] font-bold">${escapeHtml(message)}</span></div>`;
+        statusMessage.hidden = false;
+      }
+
+      function renderResults() {
+        const ordered = [...currentResults];
+        if (sortSelect.value === "newest") {
+          ordered.sort((a, b) => new Date(b.datePosted || 0) - new Date(a.datePosted || 0));
+        } else {
+          ordered.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+        }
+
+        resultsList.innerHTML = ordered.map((job) => `
+          <div class="bg-[#FAF7F2] border border-[#D5CDC5] rounded-2xl p-space-lg flex flex-col justify-between shadow-md hover:shadow-xl transition-all group">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl bg-[#E8F3EB] border border-[#B7D8C4] flex items-center justify-center font-bold text-[#11261D] text-xs">
+                ${escapeHtml((job.company || 'JOB')[0].toUpperCase())}
+              </div>
+              <div class="flex-1">
+                <h3 class="font-headline-sm text-headline-sm text-[#11261D] font-bold mt-1">${escapeHtml(job.title)}</h3>
+                <p class="font-body-sm text-body-sm text-[#4D6A5D]">${escapeHtml(job.company || job.source || 'Company')}</p>
+              </div>
+              ${job.matchScore ? `<span class="px-2.5 py-1 rounded-full bg-[#D8F3DC] text-[#083320] border border-[#95D5B2] font-label-mono-sm text-label-mono-sm font-bold">${job.matchScore}%</span>` : ''}
+            </div>
+            <div class="mt-space-md flex flex-wrap gap-1.5">
+              ${job.location ? `<span class="px-2.5 py-1 rounded-lg bg-[#EAE3D9] text-[#2B3A33] font-body-sm text-xs">📍 ${escapeHtml(job.location)}</span>` : ''}
+              ${job.seniority ? `<span class="px-2.5 py-1 rounded-lg bg-[#EAE3D9] text-[#2B3A33] font-body-sm text-xs">✳ ${escapeHtml(job.seniority)}</span>` : ''}
+              ${job.datePosted ? `<span class="px-2.5 py-1 rounded-lg bg-[#EAE3D9] text-[#2B3A33] font-body-sm text-xs">◷ ${escapeHtml(job.datePosted)}</span>` : ''}
+            </div>
+            <div class="mt-space-md pt-space-sm border-t border-[#E8E1D9] flex items-center justify-between">
+              <span class="font-body-sm text-body-sm text-[#5F7469]">Found on ${escapeHtml(job.source || 'career page')}</span>
+              <div class="flex items-center gap-2">
+              <button class="prepare-application inline-flex items-center gap-1 rounded-full border border-[#2D6A4F] bg-[#1B4332] px-3 py-2 text-xs font-bold text-[#FAF7F2] shadow-md hover:bg-[#143226]" type="button" data-job-index="${currentResults.indexOf(job)}">Prepare application</button>
+              <a class="inline-flex items-center gap-1.5 rounded-full border border-[#D5CDC5] bg-[#FAF7F2] px-3 py-2 font-label-mono-sm text-label-mono-sm font-bold text-[#1B4332]" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer">
+                View role <span class="material-symbols-outlined text-[14px]">north_east</span>
+              </a>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        statusMessage.hidden = true;
+        resultsFooter.hidden = false;
+
+        resultsList.querySelectorAll(".prepare-application").forEach((button) => {
+          button.addEventListener("click", () => {
+            selectedApplicationJob = currentResults[Number(button.dataset.jobIndex)];
+            if (!selectedApplicationJob) return;
+            applicationForm.reset();
+            applicationError.hidden = true;
+            applicationResult.hidden = true;
+            applicationOpenLink.hidden = true;
+            applicationSubmit.disabled = false;
+            applicationSubmit.textContent = "Prepare fields for review";
+            applicationJobTitle.textContent = `${selectedApplicationJob.title} · ${selectedApplicationJob.company || selectedApplicationJob.source || "Company"}`;
+            applicationDialog.showModal();
+          });
+        });
+      }
+
+      document.querySelector("#application-close").addEventListener("click", () => applicationDialog.close());
+      applicationDialog.addEventListener("click", (event) => {
+        if (event.target === applicationDialog) applicationDialog.close();
+      });
+
+      applicationForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!selectedApplicationJob) return;
+        const formData = new FormData(applicationForm);
+        const profile = Object.fromEntries(
+          ["fullName", "email", "phone", "location", "linkedin", "portfolio", "skills", "experienceSummary"]
+            .map((name) => [name, String(formData.get(name) || "").trim()])
+        );
+        if (!Object.values(profile).some(Boolean)) {
+          applicationError.textContent = "Enter at least one profile detail, then confirm consent.";
+          applicationError.hidden = false;
+          return;
+        }
+        applicationError.hidden = true;
+        applicationResult.hidden = true;
+        applicationSubmit.disabled = true;
+        applicationSubmit.textContent = "Preparing in TinyFish…";
+        try {
+          const response = await fetch("/api/fill-application", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              consent: applicationForm.elements.namedItem("consent").checked,
+              applicationUrl: selectedApplicationJob.url,
+              profile,
+            }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Application helper returned HTTP ${response.status}.`);
+          const prepared = payload.application;
+          applicationResult.replaceChildren();
+          const summary = document.createElement("p");
+          summary.textContent = prepared.filledFields.length
+            ? "TinyFish prepared these values in its hosted browser. Review or copy them into the employer page; that browser session is not transferred here."
+            : "No profile values were filled. Review the employer page and complete it yourself.";
+          applicationResult.append(summary);
+          if (prepared.filledFields.length) {
+            const fields = document.createElement("ul");
+            fields.className = "mt-3 space-y-2";
+            for (const field of prepared.filledFields) {
+              const row = document.createElement("li");
+              row.className = "flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#B7D8C4] bg-white/70 px-3 py-2";
+              const value = document.createElement("span");
+              value.className = "min-w-0 break-words";
+              value.textContent = `${field.label}: ${field.value}`;
+              const copy = document.createElement("button");
+              copy.className = "shrink-0 rounded-full border border-[#2D6A4F] px-3 py-1 text-xs font-bold";
+              copy.type = "button";
+              copy.textContent = "Copy value";
+              copy.addEventListener("click", async () => {
+                try {
+                  await navigator.clipboard.writeText(field.value);
+                  copy.textContent = "Copied";
+                } catch {
+                  copy.textContent = "Select and copy";
+                }
+              });
+              row.append(value, copy);
+              fields.append(row);
+            }
+            applicationResult.append(fields);
+          }
+          if (prepared.remainingFields.length) {
+            const remaining = document.createElement("p");
+            remaining.className = "mt-3";
+            remaining.textContent = `Still needs your attention: ${prepared.remainingFields.join(", ")}.`;
+            applicationResult.append(remaining);
+          }
+          const note = document.createElement("p");
+          note.className = "mt-3";
+          note.textContent = `${prepared.notes} ${payload.sessionNote} Application submitted: no.`;
+          applicationResult.append(note);
+          applicationResult.hidden = false;
+          applicationOpenLink.href = prepared.formUrl || selectedApplicationJob.url;
+          applicationOpenLink.hidden = false;
+          applicationSubmit.textContent = "Prepared — not submitted";
+        } catch (error) {
+          applicationError.textContent = error.message || "Could not prepare this application.";
+          applicationError.hidden = false;
+          applicationSubmit.textContent = "Try again";
+        } finally {
+          applicationSubmit.disabled = false;
+        }
+      });
+
+      async function handleSearch(event) {
+        event.preventDefault();
+        const preferences = Object.fromEntries(
+          ["role", "location", "seniority", "keywords"].map((name) => [
+            name,
+            form.elements.namedItem(name).value.trim()
+          ])
+        );
+
+        if (!preferences.role) {
+          form.elements.namedItem("role").focus();
+          return;
+        }
+
+        localStorage.setItem("scout-preferences", JSON.stringify(preferences));
+        currentResults = [];
+        searchButton.disabled = true;
+        resultCount.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#2D6A4F] animate-pulse"></span> Searching...';
+        telemetryFeed.innerHTML = '';
+        showStatus("Scout is searching live career pages...", true);
+
+        try {
+          const response = await fetch("/api/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(preferences)
+          });
+
+          const payload = await response.json();
+
+          if (!response.ok) throw new Error(payload.error || "Search failed");
+
+          currentResults = payload.jobs || [];
+          resultCount.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#2D6A4F]"></span> ${currentResults.length} opportunit${currentResults.length === 1 ? 'y' : 'ies'} matched`;
+
+          const stages = payload.stages || {};
+          const discovered = stages.discovered ?? payload.sources?.length ?? 0;
+          const fetched = stages.fetched ?? 0;
+          const agentSucceeded = stages.agentSucceeded ?? 0;
+          const agentFailed = stages.agentFailed ?? 0;
+
+          telemetryFeed.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="text-[#FBBF24] font-semibold font-mono">[${new Date().toLocaleTimeString()}]</span>
+              <span class="text-[#74C69D] font-bold">SEARCH:</span>
+              <span class="text-[#E2E8DD]">Discovered ${discovered} career pages</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[#FBBF24] font-semibold font-mono">[${new Date().toLocaleTimeString()}]</span>
+              <span class="text-[#74C69D] font-bold">FETCH:</span>
+              <span class="text-[#E2E8DD]">Read ${fetched} of ${discovered} discovered pages</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[#FBBF24] font-semibold font-mono">[${new Date().toLocaleTimeString()}]</span>
+              <span class="text-[#D8E2DC] font-bold">AGENT:</span>
+              <span class="text-[#E2E8DD]">Checked ${agentSucceeded} pages${agentFailed ? `; ${agentFailed} failed` : ""} · ${currentResults.length} matched</span>
+            </div>
+          `;
+
+          if (currentResults.length) {
+            renderResults();
+          } else {
+            showStatus(payload.message || "No matching opportunities found. Try different keywords.");
+          }
+        } catch (error) {
+          resultCount.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Search failed';
+          showStatus(error.message || "Could not complete search");
+        } finally {
+          searchButton.disabled = false;
+        }
+      }
+
+      form.addEventListener("submit", handleSearch);
+      sortSelect.addEventListener("change", renderResults);
+
+      // Share buttons
+      document.getElementById("share-x-btn")?.addEventListener("click", () => {
+        const text = "Built Scout, a live job-search agent for the AI That Clicks workshop at Galgotias University. TinyFish Search discovers career pages, Fetch reads them, and Agent checks and matches real openings to my preferences. @TinyFishAI #AIThatClicks #TechnoJam";
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+      });
+
+      document.getElementById("share-li-btn")?.addEventListener("click", () => {
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, "_blank", "noopener,noreferrer");
+      });
+    </script>
+  </body>
+</html>
